@@ -1,0 +1,130 @@
+{
+  "_metadata": {
+    "version": "2026-Q1",
+    "last_updated": "2026-03-09",
+    "description": "Government policy-to-sector mapping for India tailwind scoring. Update quarterly.",
+    "impact_scale": "HIGH=15, MEDIUM=10, LOW=5"
+  },
+  "policies": [
+    {
+      "id": "pli_electronics",
+      "name": "PLI Scheme — IT Hardware & Electronics",
+      "description": "₹17,000 Cr incentive for electronics manufacturing (laptops, tablets, servers)",
+      "impact": "HIGH",
+      "beneficiary_sectors": ["Consumer Electronics", "Electronic Equipment", "Semiconductors", "Electronic Components"],
+      "beneficiary_keywords": ["electronics", "semiconductor", "pcb", "circuit", "led", "display", "hardware"]
+    },
+    {
+      "id": "pli_pharma",
+      "name": "PLI Scheme — Pharmaceuticals & API",
+      "description": "₹15,000 Cr for bulk drug & medical devices manufacturing",
+      "impact": "HIGH",
+      "beneficiary_sectors": ["Pharmaceuticals", "Drug Manufacturers", "Healthcare", "Biotechnology"],
+      "beneficiary_keywords": ["pharma", "drug", "api", "medical device", "biotech", "healthcare"]
+    },
+    {
+      "id": "pli_auto",
+      "name": "PLI Scheme — Auto & Auto Components",
+      "description": "₹25,938 Cr for advanced automotive technology and EV components",
+      "impact": "HIGH",
+      "beneficiary_sectors": ["Auto Components", "Auto Manufacturers", "Auto - Cars & Light Trucks"],
+      "beneficiary_keywords": ["auto", "automobile", "vehicle", "car", "ev", "battery", "motor"]
+    },
+    {
+      "id": "pli_textiles",
+      "name": "PLI Scheme — Textiles (MMF & Technical)",
+      "description": "₹10,683 Cr for man-made fibre and technical textiles",
+      "impact": "MEDIUM",
+      "beneficiary_sectors": ["Textiles", "Textile Manufacturing", "Apparel Manufacturing"],
+      "beneficiary_keywords": ["textile", "fabric", "yarn", "fibre", "garment", "apparel", "weaving"]
+    },
+    {
+      "id": "pli_food",
+      "name": "PLI Scheme — Food Processing",
+      "description": "₹10,900 Cr for food processing and millet-based products",
+      "impact": "MEDIUM",
+      "beneficiary_sectors": ["Packaged Foods", "Farm Products", "Food Distribution"],
+      "beneficiary_keywords": ["food", "edible", "dairy", "agri", "sugar", "milling", "processing"]
+    },
+    {
+      "id": "pli_steel",
+      "name": "PLI Scheme — Specialty Steel",
+      "description": "₹6,322 Cr for specialty steel production",
+      "impact": "MEDIUM",
+      "beneficiary_sectors": ["Steel", "Metal Fabrication", "Iron & Steel Products"],
+      "beneficiary_keywords": ["steel", "alloy", "stainless", "metal", "iron"]
+    },
+    {
+      "id": "defense_indigenization",
+      "name": "Defense Indigenization & Positive List",
+      "description": "410+ items banned from import. Target: 75% domestic procurement by FY29",
+      "impact": "HIGH",
+      "beneficiary_sectors": ["Aerospace & Defense", "Defense", "Industrials"],
+      "beneficiary_keywords": ["defense", "defence", "military", "aerospace", "ammunition", "naval", "missile", "radar"]
+    },
+    {
+      "id": "semiconductor_fab",
+      "name": "India Semiconductor Mission",
+      "description": "₹76,000 Cr for semiconductor fabrication and OSAT facilities",
+      "impact": "HIGH",
+      "beneficiary_sectors": ["Semiconductors", "Electronic Components", "Electronic Equipment"],
+      "beneficiary_keywords": ["semiconductor", "chip", "wafer", "osat", "foundry", "silicon"]
+    },
+    {
+      "id": "green_hydrogen",
+      "name": "National Green Hydrogen Mission",
+      "description": "₹19,744 Cr for green hydrogen production — 5 MT target by 2030",
+      "impact": "MEDIUM",
+      "beneficiary_sectors": ["Renewable Energy", "Industrial Gases", "Utilities - Renewable"],
+      "beneficiary_keywords": ["hydrogen", "electrolyser", "green energy", "renewable", "solar", "wind"]
+    },
+    {
+      "id": "pm_gati_shakti",
+      "name": "PM Gati Shakti — Infrastructure Push",
+      "description": "₹10 lakh Cr NIP for multi-modal infrastructure connectivity",
+      "impact": "HIGH",
+      "beneficiary_sectors": ["Infrastructure", "Construction", "Engineering & Construction", "Building Materials", "Cement"],
+      "beneficiary_keywords": ["infrastructure", "construction", "road", "highway", "bridge", "railway", "cement", "building"]
+    },
+    {
+      "id": "digital_india",
+      "name": "Digital India & IT Modernization",
+      "description": "Government digitization, UPI expansion, cybersecurity infrastructure",
+      "impact": "MEDIUM",
+      "beneficiary_sectors": ["Information Technology Services", "Software - Application", "Software - Infrastructure"],
+      "beneficiary_keywords": ["digital", "software", "cloud", "cybersecurity", "fintech", "saas"]
+    },
+    {
+      "id": "fame_ev",
+      "name": "FAME III / EV Ecosystem Support",
+      "description": "₹10,000 Cr+ for EV adoption, charging infrastructure, battery manufacturing",
+      "impact": "HIGH",
+      "beneficiary_sectors": ["Auto Components", "Auto Manufacturers", "Electrical Equipment"],
+      "beneficiary_keywords": ["electric vehicle", "ev", "battery", "charging", "lithium", "motor"]
+    },
+    {
+      "id": "pm_awas_yojana",
+      "name": "PM Awas Yojana (Urban & Rural Housing)",
+      "description": "3 Cr additional houses target — massive demand for building materials",
+      "impact": "MEDIUM",
+      "beneficiary_sectors": ["Building Materials", "Cement", "Building Products"],
+      "beneficiary_keywords": ["housing", "cement", "pipe", "tile", "sanitaryware", "paint", "fitting"]
+    },
+    {
+      "id": "china_plus_one",
+      "name": "China+1 Manufacturing Shift",
+      "description": "Global supply chain diversification — India as alternative manufacturing hub",
+      "impact": "MEDIUM",
+      "beneficiary_sectors": ["Chemicals", "Specialty Chemicals", "Electronic Components", "Auto Components", "Textiles"],
+      "beneficiary_keywords": ["chemical", "specialty chemical", "dye", "pigment", "agrochemical", "intermediates", "manufacturing"]
+    },
+    {
+      "id": "pli_solar",
+      "name": "PLI Scheme — Solar PV Manufacturing",
+      "description": "₹24,000 Cr for solar cell and module manufacturing",
+      "impact": "HIGH",
+      "beneficiary_sectors": ["Solar", "Renewable Energy", "Utilities - Renewable"],
+      "beneficiary_keywords": ["solar", "photovoltaic", "pv", "module", "cell", "renewable"]
+    }
+  ]
+}

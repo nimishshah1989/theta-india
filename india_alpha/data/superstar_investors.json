@@ -1,0 +1,148 @@
+{
+  "investors": [
+    {
+      "name": "Ashish Kacholia",
+      "aliases": ["ashish kacholia", "lucky securities"]
+    },
+    {
+      "name": "Vijay Kedia",
+      "aliases": ["vijay kedia", "kedia securities"]
+    },
+    {
+      "name": "Dolly Khanna",
+      "aliases": ["dolly khanna", "rajiv khanna"]
+    },
+    {
+      "name": "Mohnish Pabrai",
+      "aliases": ["mohnish pabrai", "dalal street llc"]
+    },
+    {
+      "name": "Radhakishan Damani",
+      "aliases": ["radhakishan damani", "bright star investments", "avenue supermarts"]
+    },
+    {
+      "name": "RARE Enterprises (Jhunjhunwala Legacy)",
+      "aliases": ["rare enterprises", "rekha jhunjhunwala"]
+    },
+    {
+      "name": "Mukul Agrawal",
+      "aliases": ["mukul agrawal", "mukul mahavir prasad agrawal"]
+    },
+    {
+      "name": "Sunil Singhania",
+      "aliases": ["sunil singhania", "abakkus growth fund"]
+    },
+    {
+      "name": "Porinju Veliyath",
+      "aliases": ["porinju veliyath", "equity intelligence"]
+    },
+    {
+      "name": "Anil Kumar Goel",
+      "aliases": ["anil kumar goel", "goel investments"]
+    },
+    {
+      "name": "Madhusudan Kela",
+      "aliases": ["madhusudan kela", "mk ventures"]
+    },
+    {
+      "name": "Nemish Shah",
+      "aliases": ["nemish shah", "shrevyas investments"]
+    },
+    {
+      "name": "Ramesh Damani",
+      "aliases": ["ramesh damani"]
+    },
+    {
+      "name": "Shankar Sharma",
+      "aliases": ["shankar sharma", "first global"]
+    },
+    {
+      "name": "Akash Bhanshali",
+      "aliases": ["akash bhanshali", "enam holdings"]
+    },
+    {
+      "name": "Sanjay Bakshi",
+      "aliases": ["sanjay bakshi"]
+    },
+    {
+      "name": "Basant Maheshwari",
+      "aliases": ["basant maheshwari", "basant maheshwari wealth advisers"]
+    },
+    {
+      "name": "Kenneth Andrade",
+      "aliases": ["kenneth andrade", "old bridge capital"]
+    },
+    {
+      "name": "Sameer Narayan",
+      "aliases": ["sameer narayan"]
+    },
+    {
+      "name": "Raamdeo Agrawal",
+      "aliases": ["raamdeo agrawal", "motilal oswal"]
+    },
+    {
+      "name": "Vallabh Bhanshali",
+      "aliases": ["vallabh bhanshali"]
+    },
+    {
+      "name": "S Naren",
+      "aliases": ["s naren", "sankaran naren"]
+    },
+    {
+      "name": "Sumeet Nagar",
+      "aliases": ["sumeet nagar", "malabar investments"]
+    },
+    {
+      "name": "Saurabh Mukherjea",
+      "aliases": ["saurabh mukherjea", "marcellus investment"]
+    },
+    {
+      "name": "Amit Jeswani",
+      "aliases": ["amit jeswani", "stallion asset"]
+    }
+  ],
+  "institutional_keywords": [
+    "mutual fund",
+    "insurance",
+    "pension",
+    "bank",
+    "fii",
+    "fpi",
+    "securities",
+    "capital",
+    "asset management",
+    "amc",
+    "hedge fund",
+    "goldman sachs",
+    "morgan stanley",
+    "jp morgan",
+    "citigroup",
+    "hsbc",
+    "nomura",
+    "clsa",
+    "ubs",
+    "barclays",
+    "deutsche bank",
+    "lic of india",
+    "sbi mutual",
+    "hdfc mutual",
+    "icici prudential",
+    "axis mutual",
+    "kotak mutual",
+    "nippon india",
+    "dsp mutual",
+    "aditya birla sun life",
+    "franklin templeton",
+    "mirae asset",
+    "edelweiss",
+    "invesco",
+    "pgim india",
+    "canara robeco",
+    "tata mutual",
+    "bandhan mutual",
+    "iti mutual",
+    "general insurance",
+    "national insurance",
+    "new india assurance"
+  ]
+}
