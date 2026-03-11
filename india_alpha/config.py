@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     screener_session_cookie: str = ""
     environment: str = "development"
     port: int = 8001
+    cors_origins: str = ""
+    app_version: str = "0.1.0"
 
     class Config:
         env_file = ".env"
