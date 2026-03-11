@@ -4,8 +4,8 @@ After=network.target
 
 [Service]
 Type=simple
-User=ubuntu
-Group=ubuntu
+User=ec2-user
+Group=ec2-user
 WorkingDirectory=/opt/jip-india
 EnvironmentFile=/opt/jip-india/.env
 ExecStart=/opt/jip-india/venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8001 --workers 2

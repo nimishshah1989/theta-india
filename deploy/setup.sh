@@ -1,21 +1,18 @@
 #!/bin/bash
 # ═══════════════════════════════════════════════════════════════
 # JIP Horizon India — EC2 One-Time Setup Script
-# Run on a fresh Ubuntu 22.04+ EC2 instance
+# For Amazon Linux 2023 (t3.micro, ap-south-1)
 # Usage: sudo bash deploy/setup.sh
 # ═══════════════════════════════════════════════════════════════
 set -euo pipefail
 
 APP_DIR="/opt/jip-india"
-APP_USER="ubuntu"
+APP_USER="ec2-user"
 REPO_URL="https://github.com/nimishshah1989/theta-india.git"
 
-echo "═══ Step 1: System packages ═══"
-apt-get update -qq
-apt-get install -y software-properties-common
-add-apt-repository -y ppa:deadsnakes/ppa
-apt-get update -qq
-apt-get install -y python3.11 python3.11-venv python3.11-dev nginx git curl
+echo "═══ Step 1: System packages (Amazon Linux 2023) ═══"
+dnf update -y -q
+dnf install -y python3.11 python3.11-pip python3.11-devel nginx git curl
 
 echo "═══ Step 2: Application directory ═══"
 mkdir -p "$APP_DIR"
@@ -52,10 +49,13 @@ systemctl daemon-reload
 systemctl enable jip-india
 
 echo "═══ Step 7: Nginx reverse proxy ═══"
-cp "$APP_DIR/deploy/nginx/jip-india.conf" /etc/nginx/sites-available/jip-india
-ln -sf /etc/nginx/sites-available/jip-india /etc/nginx/sites-enabled/
-rm -f /etc/nginx/sites-enabled/default
-nginx -t && systemctl reload nginx
+# Amazon Linux 2023 uses /etc/nginx/conf.d/ (no sites-available/sites-enabled)
+cp "$APP_DIR/deploy/nginx/jip-india.conf" /etc/nginx/conf.d/jip-india.conf
+# Disable default server block if it exists
+if [ -f /etc/nginx/conf.d/default.conf ]; then
+    mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.disabled
+fi
+nginx -t && systemctl enable nginx && systemctl restart nginx
 
 echo "═══ Step 8: Start application ═══"
 systemctl start jip-india
@@ -66,6 +66,7 @@ if curl -sf http://localhost:8001/health; then
     echo ""
     echo "✅ JIP Horizon India is running on port 8001"
     echo "   Nginx proxying on port 80"
+    echo "   Public: http://13.206.50.251:8001/health"
     echo "   Service: sudo systemctl status jip-india"
     echo "   Logs:    sudo journalctl -u jip-india -f"
 else
