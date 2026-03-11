@@ -1,0 +1,17 @@
+[project]
+name = "jip-horizon-india"
+version = "0.1.0"
+description = "Quantitative hidden gem stock screener for Indian mid/small-cap markets"
+requires-python = ">=3.9"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py39"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]

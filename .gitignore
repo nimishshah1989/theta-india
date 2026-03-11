@@ -35,6 +35,11 @@ Thumbs.db
 # Cache
 .cache/
 
+# Test artifacts
+.pytest_cache/
+htmlcov/
+.coverage
+
 # Claude Code local state
 .claude/
 compass_artifact_*.md
