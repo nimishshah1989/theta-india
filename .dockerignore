@@ -1,0 +1,13 @@
+.git
+.env
+.env.*
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+.claude/
+*.md
+tests/
+.pytest_cache/
+.github/
+deploy/
