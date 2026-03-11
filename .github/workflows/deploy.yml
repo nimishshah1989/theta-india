@@ -23,11 +23,12 @@ jobs:
           script_stop: true
           script: |
             set -e
-            cd /opt/jip-india
+            cd ~/apps/horizon
             git pull origin main
-            source venv/bin/activate
-            pip install --no-cache-dir -r requirements.txt --quiet
-            sudo systemctl restart jip-india
+            docker build -t theta-india .
+            docker stop horizon || true
+            docker rm horizon || true
+            docker run -d --name horizon --env-file .env -p 8002:8002 --restart unless-stopped theta-india
             sleep 3
             curl -sf http://localhost:8002/health
             echo "✅ Deploy successful"
