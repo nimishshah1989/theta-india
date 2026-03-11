@@ -37,3 +37,4 @@ Thumbs.db
 
 # Claude Code local state
 .claude/
+compass_artifact_*.md

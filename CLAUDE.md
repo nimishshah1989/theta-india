@@ -72,19 +72,21 @@ Modifiers:
 - `scripts/test_connection.py` — System health check
 - `india_alpha/db.py` — Supabase client (async + sync)
 - `india_alpha/config.py` — Pydantic settings from .env
+- `india_alpha/cost_tracker.py` — Claude API cost tracking
 - `india_alpha/fetchers/` — Data ingestion modules
   - `universe_builder.py` — NSE symbol universe + yfinance valuation fields
-  - `bse_insider.py` — BSE insider trading signals
-  - `screener_fetcher.py` — Screener.in financials
+  - `bse_insider.py` — BSE insider trading signals (fallback)
+  - `nse_insider_fetcher.py` — NSE PIT disclosures (primary)
+  - `screener_fetcher.py` — Screener.in financials + shareholding
+  - `screener_enricher.py` — Screener.in company enrichment (valuation data)
   - `nse_filings_fetcher.py` — NSE corporate announcements + PDF extraction
   - `nse_bulk_deals_fetcher.py` — NSE bulk/block deal data
-  - `bse_shareholding_fetcher.py` — BSE quarterly shareholding patterns
-  - `concall_fetcher.py` — (DEPRECATED) StockInsights.ai transcript fetch
+  - `bse_shareholding_fetcher.py` — BSE quarterly shareholding patterns (fallback)
+  - `nse_shareholding_fetcher.py` — NSE shareholding patterns (primary)
 - `india_alpha/signals/` — Scoring modules
   - `promoter_scorer.py` — Layer 1: Insider trading scoring
   - `operating_leverage.py` — Layer 2: OL inflection scoring
   - `corporate_intelligence_scorer.py` — Layer 3: Python rules + Claude filing analysis
-  - `concall_scorer.py` — (DEPRECATED) Claude-only concall analysis
   - `policy_scorer.py` — Layer 4: Policy tailwind scoring
   - `quality_scorer.py` — Layer 5: Quality emergence scoring
   - `valuation_scorer.py` — Modifier: Valuation gate (PE, P/B, EV/EBITDA, 52-week)

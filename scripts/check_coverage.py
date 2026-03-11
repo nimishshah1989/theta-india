@@ -70,8 +70,7 @@ def main():
         ("india_companies", "Universe (master registry)"),
         ("india_promoter_signals", "Raw insider trades (Layer 1)"),
         ("india_financials_history", "Raw financials (Layer 2)"),
-        ("india_corporate_filings", "Raw corporate filings (Layer 3 new)"),
-        ("india_concalls", "Raw concall transcripts (Layer 3 old/deprecated)"),
+        ("india_corporate_filings", "Raw corporate filings (Layer 3)"),
     ]
 
     print("-" * 72)
@@ -89,8 +88,7 @@ def main():
     scored_tables = [
         ("india_promoter_summary", "promoter_signal_score", "Layer 1 - Promoter Signal"),
         ("india_operating_leverage_scores", "ol_score", "Layer 2 - Operating Leverage"),
-        ("india_corporate_intelligence_scores", "corporate_intelligence_score", "Layer 3 - Corporate Intel (new)"),
-        ("india_concall_signals", "concall_signal_score", "Layer 3 - Concall (old/deprecated)"),
+        ("india_corporate_intelligence_scores", "corporate_intelligence_score", "Layer 3 - Corporate Intelligence"),
         ("india_policy_scores", "policy_score", "Layer 4 - Policy Tailwind"),
         ("india_quality_scores", "quality_score", "Layer 5 - Quality Emergence"),
     ]

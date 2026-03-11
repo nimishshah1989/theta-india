@@ -308,16 +308,21 @@ CREATE TABLE IF NOT EXISTS india_hidden_gems (
     market_cap_cr   FLOAT,
     analyst_count   INTEGER DEFAULT 0,
 
-    -- Layer scores
-    composite_score             FLOAT,
+    -- Raw layer scores
     promoter_score              INTEGER,
     operating_leverage_score    INTEGER,
     concall_score               INTEGER,
     policy_tailwind_score       INTEGER,
     quality_emergence_score     INTEGER,
-
-    -- Flags
+    -- Modifier values applied
+    valuation_multiplier        FLOAT DEFAULT 1.00,
+    smart_money_bonus           INTEGER DEFAULT 0,
+    degradation_penalty         INTEGER DEFAULT 0,
+    -- Composite output
+    base_composite              FLOAT,
+    final_score                 FLOAT,
     conviction_tier             TEXT,
+    -- Discovery flags
     is_pre_discovery            BOOLEAN DEFAULT false,
     is_below_institutional      BOOLEAN DEFAULT false,
     layers_firing               INTEGER DEFAULT 0,
@@ -350,12 +355,14 @@ ALTER TABLE india_companies ADD COLUMN IF NOT EXISTS two_hundred_dma FLOAT;
 ALTER TABLE india_companies ADD COLUMN IF NOT EXISTS free_cash_flow FLOAT;
 
 -- ─────────────────────────────────────────────────────────────
--- 5b. NEW MODIFIER COLUMNS ON india_hidden_gems
+-- 5b. MODIFIER & AUDIT COLUMNS ON india_hidden_gems
+-- (migration for existing deployments — new deployments get these in CREATE TABLE above)
 -- ─────────────────────────────────────────────────────────────
-ALTER TABLE india_hidden_gems ADD COLUMN IF NOT EXISTS valuation_score FLOAT;
-ALTER TABLE india_hidden_gems ADD COLUMN IF NOT EXISTS valuation_zone TEXT;
-ALTER TABLE india_hidden_gems ADD COLUMN IF NOT EXISTS smart_money_score FLOAT;
-ALTER TABLE india_hidden_gems ADD COLUMN IF NOT EXISTS degradation_score FLOAT;
+ALTER TABLE india_hidden_gems ADD COLUMN IF NOT EXISTS valuation_multiplier FLOAT DEFAULT 1.00;
+ALTER TABLE india_hidden_gems ADD COLUMN IF NOT EXISTS smart_money_bonus INTEGER DEFAULT 0;
+ALTER TABLE india_hidden_gems ADD COLUMN IF NOT EXISTS degradation_penalty INTEGER DEFAULT 0;
+ALTER TABLE india_hidden_gems ADD COLUMN IF NOT EXISTS base_composite FLOAT;
+ALTER TABLE india_hidden_gems ADD COLUMN IF NOT EXISTS final_score FLOAT;
 ALTER TABLE india_hidden_gems ADD COLUMN IF NOT EXISTS is_degrading BOOLEAN DEFAULT false;
 
 -- ─────────────────────────────────────────────────────────────
@@ -486,7 +493,7 @@ CREATE INDEX IF NOT EXISTS idx_financials_isin_type
     ON india_financials_history(isin, period_type, period_end DESC);
 
 CREATE INDEX IF NOT EXISTS idx_hidden_gems_tier
-    ON india_hidden_gems(conviction_tier, scored_at DESC);
+    ON india_hidden_gems(conviction_tier, final_score DESC);
 
 CREATE INDEX IF NOT EXISTS idx_companies_tier
     ON india_companies(market_cap_tier, market_cap_cr DESC);

@@ -324,7 +324,7 @@ async def step_output(db):
     result = await db.table("india_hidden_gems") \
         .select("*") \
         .in_("conviction_tier", ["HIGHEST", "HIGH", "MEDIUM"]) \
-        .order("composite_score", desc=True) \
+        .order("final_score", desc=True) \
         .limit(20) \
         .execute()
     gems = result.data or []
@@ -351,17 +351,18 @@ async def step_output(db):
         print(f"  ₹{gem.get('market_cap_cr') or '?'} Cr | "
               f"{gem.get('analyst_count') or 0} analysts | "
               f"Layers firing: {gem.get('layers_firing', 0)}")
-        print(f"  Promoter: {p_score}  |  OL: {o_score}  |  Concall: {c_score}  |  "
+        base = gem.get("base_composite") or "—"
+        final = gem.get("final_score") or "—"
+        print(f"  Promoter: {p_score}  |  OL: {o_score}  |  Corp Intel: {c_score}  |  "
               f"Policy: {pol_score}  |  Quality: {q_score}")
 
-        val_zone = gem.get("valuation_zone") or "N/A"
-        val_score = gem.get("valuation_score") or "—"
-        sm_score = int(gem.get("smart_money_score") or 0)
-        deg_score = int(gem.get("degradation_score") or 0)
+        val_mult = gem.get("valuation_multiplier") or 1.0
+        sm_bonus = int(gem.get("smart_money_bonus") or 0)
+        deg_penalty = int(gem.get("degradation_penalty") or 0)
         is_deg = gem.get("is_degrading", False)
         deg_flag = " DEGRADING" if is_deg else ""
-        print(f"  Valuation: {val_zone} ({val_score})  |  "
-              f"Smart Money: {sm_score:+d}  |  Degradation: {deg_score}{deg_flag}")
+        print(f"  Base: {base}  →  x{val_mult}  {sm_bonus:+d}sm  {deg_penalty}deg  →  Final: {final}")
+        print(f"  Degradation: {deg_penalty}{deg_flag}")
 
         if gem.get("gem_thesis"):
             print(f"\n  THESIS: {gem['gem_thesis']}")

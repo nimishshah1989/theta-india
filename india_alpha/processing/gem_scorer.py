@@ -7,11 +7,11 @@ Claude is used ONLY for the synthesis narrative on HIGH/HIGHEST tier companies.
 All numerical scores are pure Python.
 
 Base score weights (all 5 layers active):
-  Promoter signal:      30%
-  Operating leverage:   30%
-  Concall intelligence: 25%
-  Policy tailwind:      10%
-  Quality emergence:     5%
+  Promoter signal:          30%
+  Operating leverage:       30%
+  Corporate intelligence:   25%
+  Policy tailwind:          10%
+  Quality emergence:         5%
 
 Raw layer scores are rescaled via per-layer breakpoint tables before
 the weighted average, stretching compressed 10-30 raw scores to the
@@ -46,7 +46,7 @@ log = structlog.get_logger()
 SCORE_WEIGHTS = {
     "promoter":    0.30,
     "ol":          0.30,
-    "concall":     0.25,
+    "corp_intel":  0.25,
     "policy":      0.10,
     "quality":     0.05,
 }
@@ -61,11 +61,11 @@ TIER_THRESHOLDS = {
 # Piecewise-linear breakpoint tables to stretch compressed raw scores
 # to the full 0-100 range. Format: list of (raw, rescaled) tuples.
 LAYER_CALIBRATION = {
-    "promoter": [(0, 0), (10, 25), (20, 50), (30, 70), (50, 85), (75, 95), (100, 100)],
-    "ol":       [(0, 0), (10, 20), (25, 50), (40, 70), (55, 85), (75, 95), (100, 100)],
-    "concall":  [(0, 0), (8, 20), (18, 50), (30, 70), (45, 85), (70, 95), (100, 100)],
-    "policy":   [(0, 0), (10, 25), (20, 50), (35, 70), (50, 85), (75, 95), (100, 100)],
-    "quality":  [(0, 0), (10, 25), (20, 50), (30, 70), (50, 85), (75, 95), (100, 100)],
+    "promoter":   [(0, 0), (10, 25), (20, 50), (30, 70), (50, 85), (75, 95), (100, 100)],
+    "ol":         [(0, 0), (10, 20), (25, 50), (40, 70), (55, 85), (75, 95), (100, 100)],
+    "corp_intel": [(0, 0), (8, 20), (18, 50), (30, 70), (45, 85), (70, 95), (100, 100)],
+    "policy":     [(0, 0), (10, 25), (20, 50), (35, 70), (50, 85), (75, 95), (100, 100)],
+    "quality":    [(0, 0), (10, 25), (20, 50), (30, 70), (50, 85), (75, 95), (100, 100)],
 }
 
 
@@ -106,8 +106,8 @@ SIGNAL SCORES:
 - Operating Leverage Score: {ol_score}/100
   {ol_narrative}
 
-- Concall Intelligence Score: {concall_score}/100
-  {concall_narrative}
+- Corporate Intelligence Score: {corp_intel_score}/100
+  {corp_intel_narrative}
 
 - Policy Tailwind Score: {policy_score}/100
   {policy_narrative}
@@ -118,7 +118,7 @@ SIGNAL SCORES:
 VALUATION CONTEXT:
   Zone: {valuation_zone} | Multiplier: {valuation_multiplier}x
   PE: {trailing_pe} | P/B: {price_to_book} | EV/EBITDA: {ev_to_ebitda}
-  Smart Money Bonus: {smart_money_score} | Degradation: {degradation_score}
+  Smart Money Bonus: {smart_money_bonus} | Degradation: {degradation_penalty}
 
 TOP ACTIVE SIGNALS:
 {active_signals}
@@ -143,7 +143,7 @@ Quality over output — a WATCH rating is more valuable than a false HIGH.
 def compute_composite_score(
     promoter_score: int = 0,
     ol_score: int = 0,
-    concall_score: int = 0,
+    corp_intel_score: int = 0,
     policy_score: int = 0,
     quality_score: int = 0,
 ) -> float:
@@ -155,11 +155,11 @@ def compute_composite_score(
     Only includes layers where company has data (raw score > 0).
     """
     raw_scores = {
-        "promoter": promoter_score or 0,
-        "ol":       ol_score or 0,
-        "concall":  concall_score or 0,
-        "policy":   policy_score or 0,
-        "quality":  quality_score or 0,
+        "promoter":   promoter_score or 0,
+        "ol":         ol_score or 0,
+        "corp_intel": corp_intel_score or 0,
+        "policy":     policy_score or 0,
+        "quality":    quality_score or 0,
     }
 
     # Rescale each layer
@@ -203,23 +203,12 @@ def get_conviction_tier(composite: float) -> str:
     return "BELOW_THRESHOLD"
 
 
-TIER_ORDER = ["BELOW_THRESHOLD", "WATCH", "MEDIUM", "HIGH", "HIGHEST"]
-
-
-def downgrade_tier(tier: str) -> str:
-    """Downgrade conviction tier by one level (used when is_degrading=True)."""
-    idx = TIER_ORDER.index(tier) if tier in TIER_ORDER else 0
-    if idx > 0:
-        return TIER_ORDER[idx - 1]
-    return tier
-
-
 async def synthesise_thesis(
     claude_client: anthropic.AsyncAnthropic,
     company: dict,
     promoter: dict,
     ol: dict,
-    concall: dict,
+    corp_intel: dict,
     policy: dict,
     quality: dict,
     model: str = "claude-sonnet-4-6",
@@ -241,14 +230,14 @@ async def synthesise_thesis(
     for sig in (ol.get("active_signals") or [])[:2]:
         active_signals.append(f"• OL: {sig.get('description', '')} — {sig.get('implication', '')}")
 
-    if concall.get("hidden_insight"):
-        active_signals.append(f"• CORP INTEL: {concall['hidden_insight']}")
+    if corp_intel.get("hidden_insight"):
+        active_signals.append(f"• CORP INTEL: {corp_intel['hidden_insight']}")
 
-    for action in (concall.get("key_capital_actions") or [])[:2]:
+    for action in (corp_intel.get("key_capital_actions") or [])[:2]:
         if isinstance(action, str):
             active_signals.append(f"• CAPITAL ACTION: {action}")
 
-    for flag in (concall.get("governance_flags") or [])[:2]:
+    for flag in (corp_intel.get("governance_flags") or [])[:2]:
         if isinstance(flag, str):
             active_signals.append(f"• GOVERNANCE: {flag}")
 
@@ -271,8 +260,8 @@ async def synthesise_thesis(
         promoter_narrative=promoter.get("score_narrative", "No data"),
         ol_score=ol.get("ol_score", 0),
         ol_narrative=ol.get("score_narrative", "No data"),
-        concall_score=concall.get("concall_signal_score", 0),
-        concall_narrative=concall.get("tone_reasoning") or "No concall data",
+        corp_intel_score=corp_intel.get("corp_intel_score", 0),
+        corp_intel_narrative=corp_intel.get("score_narrative") or "No corporate intelligence data",
         policy_score=policy.get("policy_score", 0),
         policy_narrative=policy.get("score_narrative", "No policy data"),
         quality_score=quality.get("quality_score", 0),
@@ -282,8 +271,8 @@ async def synthesise_thesis(
         trailing_pe=val.get("trailing_pe", "N/A"),
         price_to_book=val.get("price_to_book", "N/A"),
         ev_to_ebitda=val.get("ev_to_ebitda", "N/A"),
-        smart_money_score=sm.get("smart_money_score", 0),
-        degradation_score=deg.get("degradation_score", 0),
+        smart_money_bonus=sm.get("smart_money_score", 0),
+        degradation_penalty=deg.get("degradation_score", 0),
         active_signals="\n".join(active_signals) or "None available",
     )
 
@@ -307,7 +296,7 @@ async def synthesise_thesis(
                 output_tokens=response.usage.output_tokens,
             )
 
-        # Parse JSON — with fallback
+        # Parse JSON — with fallback for markdown code fences
         try:
             return json.loads(text)
         except json.JSONDecodeError:
@@ -334,20 +323,32 @@ def _default_thesis() -> dict:
     }
 
 
+def _extract_corp_intel_data(corp_intel_row: dict) -> dict:
+    """Map corporate intelligence table fields to internal scorer format."""
+    return {
+        "corp_intel_score": corp_intel_row.get("corporate_intelligence_score", 0),
+        "hidden_insight": corp_intel_row.get("hidden_insight"),
+        "score_narrative": corp_intel_row.get("score_narrative"),
+        "management_tone": corp_intel_row.get("management_tone"),
+        "forward_signals": corp_intel_row.get("key_forward_signals", []),
+        "key_capital_actions": corp_intel_row.get("key_capital_actions", []),
+        "governance_flags": corp_intel_row.get("governance_flags", []),
+    }
+
+
 async def _bulk_fetch_all_tables(db) -> dict:
     """
-    Fetch all 10 scoring tables in parallel, return keyed lookup maps.
-    ~10 paginated queries instead of ~9 per company.
+    Fetch all 9 scoring tables in parallel, return keyed lookup maps.
+    ~9 paginated queries instead of ~9 per company.
     Returns: {table_name: {key: row_dict}}
     """
     (companies_rows, promo_rows, ol_rows, corp_intel_rows,
-     concall_rows, policy_rows, quality_rows,
+     policy_rows, quality_rows,
      val_rows, sm_rows, deg_rows) = await asyncio.gather(
         fetch_all_rows(db, "india_companies"),
         fetch_all_rows(db, "india_promoter_summary"),
         fetch_all_rows(db, "india_operating_leverage_scores"),
         fetch_all_rows(db, "india_corporate_intelligence_scores"),
-        fetch_all_rows(db, "india_concall_signals"),
         fetch_all_rows(db, "india_policy_scores"),
         fetch_all_rows(db, "india_quality_scores"),
         fetch_all_rows(db, "india_valuation_scores"),
@@ -366,22 +367,11 @@ async def _bulk_fetch_all_tables(db) -> dict:
     sm_map = {r["isin"]: r for r in sm_rows if r.get("isin")}
     deg_map = {r["isin"]: r for r in deg_rows if r.get("isin")}
 
-    # For concall_signals, keep only latest row per isin (highest processed_at)
-    concall_map = {}
-    for r in concall_rows:
-        isin = r.get("isin")
-        if not isin:
-            continue
-        existing = concall_map.get(isin)
-        if not existing or (r.get("processed_at", "") > existing.get("processed_at", "")):
-            concall_map[isin] = r
-
     log.info("bulk_fetch_complete",
              companies=len(companies_map),
              promoter=len(promo_map),
              ol=len(ol_map),
              corp_intel=len(corp_intel_map),
-             concall=len(concall_map),
              policy=len(policy_map),
              quality=len(quality_map),
              valuation=len(val_map),
@@ -393,7 +383,6 @@ async def _bulk_fetch_all_tables(db) -> dict:
         "promoter": promo_map,
         "ol": ol_map,
         "corp_intel": corp_intel_map,
-        "concall": concall_map,
         "policy": policy_map,
         "quality": quality_map,
         "valuation": val_map,
@@ -409,7 +398,7 @@ def _score_company_from_cache(
 ) -> tuple:
     """
     Pure function: compute composite score from in-memory lookup maps.
-    Returns (record_dict, tier_str) — zero DB calls.
+    Returns (record_dict, tier_str, layer_data_dict) — zero DB calls.
     """
     company = cache["companies"].get(ticker, {"ticker": ticker, "isin": isin})
     promoter = cache["promoter"].get(isin, {})
@@ -420,53 +409,41 @@ def _score_company_from_cache(
     smart_money = cache["smart_money"].get(isin, {})
     degradation = cache["degradation"].get(isin, {})
 
-    # Corporate intelligence with fallback to legacy concall signals
-    corp_intel = cache["corp_intel"].get(isin)
-    if corp_intel:
-        concall = {
-            "concall_signal_score": corp_intel.get("corporate_intelligence_score", 0),
-            "hidden_insight": corp_intel.get("hidden_insight"),
-            "tone_reasoning": corp_intel.get("score_narrative"),
-            "management_tone": corp_intel.get("management_tone"),
-            "forward_signals": corp_intel.get("key_forward_signals", []),
-            "key_capital_actions": corp_intel.get("key_capital_actions", []),
-            "governance_flags": corp_intel.get("governance_flags", []),
-        }
-    else:
-        concall = cache["concall"].get(isin, {})
+    # Corporate intelligence — single source, no legacy fallback
+    corp_intel_row = cache["corp_intel"].get(isin)
+    corp_intel = _extract_corp_intel_data(corp_intel_row) if corp_intel_row else {}
 
     # Compute base composite with all 5 layers
     p_score = promoter.get("promoter_signal_score", 0) or 0
     o_score = ol.get("ol_score", 0) or 0
-    c_score = concall.get("concall_signal_score", 0) or 0
+    ci_score = corp_intel.get("corp_intel_score", 0) or 0
     pol_score = policy.get("policy_score", 0) or 0
     q_score = quality.get("quality_score", 0) or 0
 
     base_composite = compute_composite_score(
         promoter_score=p_score,
         ol_score=o_score,
-        concall_score=c_score,
+        corp_intel_score=ci_score,
         policy_score=pol_score,
         quality_score=q_score,
     )
 
     # Apply 3 modifiers
     val_multiplier = valuation.get("valuation_multiplier", 1.0) or 1.0
-    val_score = valuation.get("valuation_score")
-    val_zone = valuation.get("valuation_zone", "FAIR")
     sm_bonus = smart_money.get("smart_money_score", 0) or 0
     deg_penalty = degradation.get("degradation_score", 0) or 0
     is_degrading = degradation.get("is_degrading", False)
 
-    composite = max(0, min(100, round(
+    # final = clamp(base * valuation_mult + smart_money + degradation, 0, 100)
+    final_score = max(0, min(100, round(
         base_composite * val_multiplier + sm_bonus + deg_penalty, 1
     )))
 
-    tier = get_conviction_tier(composite)
+    tier = get_conviction_tier(final_score)
 
     layers_firing = sum(
         1 for layer, raw in [
-            ("promoter", p_score), ("ol", o_score), ("concall", c_score),
+            ("promoter", p_score), ("ol", o_score), ("corp_intel", ci_score),
             ("policy", pol_score), ("quality", q_score),
         ]
         if rescale_layer_score(layer, raw) >= 40
@@ -479,21 +456,25 @@ def _score_company_from_cache(
         "exchange": company.get("exchange", "NSE"),
         "market_cap_cr": company.get("market_cap_cr"),
         "analyst_count": company.get("analyst_count", 0),
+        # Raw layer scores
         "promoter_score": promoter.get("promoter_signal_score"),
         "operating_leverage_score": ol.get("ol_score"),
-        "concall_score": concall.get("concall_signal_score"),
+        "concall_score": ci_score or None,
         "policy_tailwind_score": policy.get("policy_score"),
         "quality_emergence_score": quality.get("quality_score"),
-        "valuation_score": val_score,
-        "valuation_zone": val_zone,
-        "smart_money_score": sm_bonus,
-        "degradation_score": deg_penalty,
-        "is_degrading": is_degrading,
-        "composite_score": composite,
+        # Modifier values applied
+        "valuation_multiplier": val_multiplier,
+        "smart_money_bonus": sm_bonus,
+        "degradation_penalty": deg_penalty,
+        # Composite output
+        "base_composite": base_composite,
+        "final_score": final_score,
         "conviction_tier": tier,
-        "is_below_institutional": (company.get("market_cap_cr") or 0) < 2500,
+        # Discovery flags
         "is_pre_discovery": (company.get("analyst_count") or 0) < 3,
+        "is_below_institutional": (company.get("market_cap_cr") or 0) < 2500,
         "layers_firing": layers_firing,
+        "is_degrading": is_degrading,
         # Synthesis fields — filled later for HIGH/HIGHEST
         "gem_thesis": None,
         "key_catalyst": None,
@@ -510,7 +491,7 @@ def _score_company_from_cache(
         "company": company,
         "promoter": promoter,
         "ol": ol,
-        "concall": concall,
+        "corp_intel": corp_intel,
         "policy": policy,
         "quality": quality,
         "valuation": valuation,
@@ -529,7 +510,7 @@ async def score_and_store_gem(
 ) -> Optional[dict]:
     """Full composite scoring for one company. Main entry point."""
 
-    # Parallel DB queries — all 9 lookups at once (6 layers + 3 modifiers)
+    # Parallel DB queries — all 8 lookups at once (5 layers + 3 modifiers)
     (comp_result, promo_result, ol_result, corp_intel_result,
      policy_result, quality_result,
      val_result, sm_result, deg_result) = await asyncio.gather(
@@ -553,67 +534,50 @@ async def score_and_store_gem(
     smart_money = sm_result.data[0] if sm_result.data else {}
     degradation = deg_result.data[0] if deg_result.data else {}
 
-    # Corporate intelligence (new) with fallback to legacy concall signals
-    if corp_intel_result.data:
-        corp_intel = corp_intel_result.data[0]
-        concall = {
-            "concall_signal_score": corp_intel.get("corporate_intelligence_score", 0),
-            "hidden_insight": corp_intel.get("hidden_insight"),
-            "tone_reasoning": corp_intel.get("score_narrative"),
-            "management_tone": corp_intel.get("management_tone"),
-            "forward_signals": corp_intel.get("key_forward_signals", []),
-            "key_capital_actions": corp_intel.get("key_capital_actions", []),
-            "governance_flags": corp_intel.get("governance_flags", []),
-        }
-    else:
-        concall_result = await db.table("india_concall_signals") \
-            .select("*").eq("isin", isin) \
-            .order("processed_at", desc=True).limit(1).execute()
-        concall = concall_result.data[0] if concall_result.data else {}
+    # Corporate intelligence — single source
+    corp_intel = _extract_corp_intel_data(corp_intel_result.data[0]) if corp_intel_result.data else {}
 
     # Compute base composite with all 5 layers
     p_score = promoter.get("promoter_signal_score", 0) or 0
     o_score = ol.get("ol_score", 0) or 0
-    c_score = concall.get("concall_signal_score", 0) or 0
+    ci_score = corp_intel.get("corp_intel_score", 0) or 0
     pol_score = policy.get("policy_score", 0) or 0
     q_score = quality.get("quality_score", 0) or 0
 
     base_composite = compute_composite_score(
         promoter_score=p_score,
         ol_score=o_score,
-        concall_score=c_score,
+        corp_intel_score=ci_score,
         policy_score=pol_score,
         quality_score=q_score,
     )
 
-    # ─── Apply 3 modifiers ─────────────────────────────────────────────
+    # Apply 3 modifiers
     val_multiplier = valuation.get("valuation_multiplier", 1.0) or 1.0
-    val_score = valuation.get("valuation_score")
-    val_zone = valuation.get("valuation_zone", "FAIR")
     sm_bonus = smart_money.get("smart_money_score", 0) or 0
     deg_penalty = degradation.get("degradation_score", 0) or 0
     is_degrading = degradation.get("is_degrading", False)
 
     # final = clamp(base * valuation_mult + smart_money + degradation, 0, 100)
-    composite = max(0, min(100, round(
+    final_score = max(0, min(100, round(
         base_composite * val_multiplier + sm_bonus + deg_penalty, 1
     )))
 
-    tier = get_conviction_tier(composite)
+    tier = get_conviction_tier(final_score)
 
     # Claude synthesis only for HIGH+ tier (budget-checked)
     synthesis = {}
     if tier in ("HIGHEST", "HIGH") and claude_client:
         synthesis = await synthesise_thesis(
             claude_client, company, promoter, ol,
-            concall, policy, quality, model, cost_tracker,
+            corp_intel, policy, quality, model, cost_tracker,
             valuation=valuation, smart_money=smart_money,
             degradation=degradation,
         )
 
     layers_firing = sum(
         1 for layer, raw in [
-            ("promoter", p_score), ("ol", o_score), ("concall", c_score),
+            ("promoter", p_score), ("ol", o_score), ("corp_intel", ci_score),
             ("policy", pol_score), ("quality", q_score),
         ]
         if rescale_layer_score(layer, raw) >= 40
@@ -626,23 +590,26 @@ async def score_and_store_gem(
         "exchange": company.get("exchange", "NSE"),
         "market_cap_cr": company.get("market_cap_cr"),
         "analyst_count": company.get("analyst_count", 0),
+        # Raw layer scores
         "promoter_score": promoter.get("promoter_signal_score"),
         "operating_leverage_score": ol.get("ol_score"),
-        "concall_score": concall.get("concall_signal_score"),
+        "concall_score": ci_score or None,
         "policy_tailwind_score": policy.get("policy_score"),
         "quality_emergence_score": quality.get("quality_score"),
-        # New modifier columns
-        "valuation_score": val_score,
-        "valuation_zone": val_zone,
-        "smart_money_score": sm_bonus,
-        "degradation_score": deg_penalty,
-        "is_degrading": is_degrading,
-        "composite_score": composite,
+        # Modifier values applied
+        "valuation_multiplier": val_multiplier,
+        "smart_money_bonus": sm_bonus,
+        "degradation_penalty": deg_penalty,
+        # Composite output
+        "base_composite": base_composite,
+        "final_score": final_score,
         "conviction_tier": tier,
-        "is_below_institutional": (company.get("market_cap_cr") or 0) < 2500,
+        # Discovery flags
         "is_pre_discovery": (company.get("analyst_count") or 0) < 3,
+        "is_below_institutional": (company.get("market_cap_cr") or 0) < 2500,
         "layers_firing": layers_firing,
-        # Synthesis fields (empty if not run)
+        "is_degrading": is_degrading,
+        # Synthesis fields
         "gem_thesis": synthesis.get("gem_thesis"),
         "key_catalyst": synthesis.get("key_catalyst"),
         "catalyst_timeline": synthesis.get("catalyst_timeline"),
@@ -660,15 +627,15 @@ async def score_and_store_gem(
 
     log.info("gem_scored",
              ticker=ticker,
-             composite=composite,
+             final=final_score,
              base=base_composite,
-             val_zone=val_zone,
+             val_mult=val_multiplier,
              sm=sm_bonus,
              deg=deg_penalty,
              tier=tier,
              layers=layers_firing)
 
-    return {**record, "composite_score": composite}
+    return record
 
 
 async def run_full_scoring(
@@ -680,12 +647,12 @@ async def run_full_scoring(
 ) -> dict:
     """
     Score all companies that have at least one signal layer fired above threshold.
-    Optimized: bulk-fetches all tables once (~10 queries), scores in-memory,
+    Optimized: bulk-fetches all tables once (~9 queries), scores in-memory,
     then batch-upserts results. ~10,000 DB calls → ~12.
     """
     results = {"scored": 0, "high_conviction": 0, "errors": 0}
 
-    # Step 1: Bulk fetch all 10 tables in parallel
+    # Step 1: Bulk fetch all 9 tables in parallel
     cache = await _bulk_fetch_all_tables(db)
 
     # Step 2: Collect candidates from cache — union all layers above min_score
@@ -709,11 +676,6 @@ async def run_full_scoring(
 
     for isin, row in cache["policy"].items():
         if (row.get("policy_score", 0) or 0) >= min_score and isin not in seen:
-            seen.add(isin)
-            candidates.append({"isin": isin, "ticker": row.get("ticker", "")})
-
-    for isin, row in cache["concall"].items():
-        if (row.get("concall_signal_score", 0) or 0) >= min_score and isin not in seen:
             seen.add(isin)
             candidates.append({"isin": isin, "ticker": row.get("ticker", "")})
 
@@ -759,7 +721,7 @@ async def run_full_scoring(
                 synthesis = await synthesise_thesis(
                     claude_client,
                     ld["company"], ld["promoter"], ld["ol"],
-                    ld["concall"], ld["policy"], ld["quality"],
+                    ld["corp_intel"], ld["policy"], ld["quality"],
                     model, cost_tracker,
                     valuation=ld["valuation"],
                     smart_money=ld["smart_money"],
