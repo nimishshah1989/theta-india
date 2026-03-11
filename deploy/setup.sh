@@ -9,10 +9,11 @@ set -euo pipefail
 APP_DIR="/opt/jip-india"
 APP_USER="ec2-user"
 REPO_URL="https://github.com/nimishshah1989/theta-india.git"
+APP_PORT=8002
 
 echo "═══ Step 1: System packages (Amazon Linux 2023) ═══"
 dnf update -y -q
-dnf install -y python3.11 python3.11-pip python3.11-devel nginx git curl
+dnf install -y python3.11 python3.11-pip python3.11-devel git curl
 
 echo "═══ Step 2: Application directory ═══"
 mkdir -p "$APP_DIR"
@@ -48,30 +49,26 @@ cp "$APP_DIR/deploy/systemd/jip-india.service" /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable jip-india
 
-echo "═══ Step 7: Nginx reverse proxy ═══"
-# Amazon Linux 2023 uses /etc/nginx/conf.d/ (no sites-available/sites-enabled)
-cp "$APP_DIR/deploy/nginx/jip-india.conf" /etc/nginx/conf.d/jip-india.conf
-# Disable default server block if it exists
-if [ -f /etc/nginx/conf.d/default.conf ]; then
-    mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.disabled
-fi
-nginx -t && systemctl enable nginx && systemctl restart nginx
+# NOTE: Nginx skipped — port 80 is used by existing Docker containers (fie2/Market Pulse).
+# JIP India runs directly on port $APP_PORT via uvicorn.
+# To add nginx later when port 80 is available:
+#   cp "$APP_DIR/deploy/nginx/jip-india.conf" /etc/nginx/conf.d/
+#   systemctl enable nginx && systemctl restart nginx
 
-echo "═══ Step 8: Start application ═══"
+echo "═══ Step 7: Start application ═══"
 systemctl start jip-india
 sleep 3
 
 echo "═══ Verification ═══"
-if curl -sf http://localhost:8001/health; then
+if curl -sf "http://localhost:$APP_PORT/health"; then
     echo ""
-    echo "✅ JIP Horizon India is running on port 8001"
-    echo "   Nginx proxying on port 80"
-    echo "   Public: http://13.206.50.251:8001/health"
+    echo "JIP Horizon India is running on port $APP_PORT"
+    echo "   Public: http://13.206.50.251:$APP_PORT/health"
     echo "   Service: sudo systemctl status jip-india"
     echo "   Logs:    sudo journalctl -u jip-india -f"
 else
     echo ""
-    echo "⚠️  Health check failed. Check:"
+    echo "Health check failed. Check:"
     echo "   sudo systemctl status jip-india"
     echo "   sudo journalctl -u jip-india --no-pager -n 50"
     echo "   Make sure .env is configured: $APP_DIR/.env"

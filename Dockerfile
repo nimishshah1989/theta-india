@@ -11,6 +11,6 @@ COPY india_alpha/ ./india_alpha/
 COPY scripts/ ./scripts/
 COPY main.py .
 
-EXPOSE 8001
+EXPOSE 8002
 
-CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "2"]
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002", "--workers", "1"]

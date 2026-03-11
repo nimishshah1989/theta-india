@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     claude_daily_budget_usd: float = 0.30
     screener_session_cookie: str = ""
     environment: str = "development"
-    port: int = 8001
+    port: int = 8002
     cors_origins: str = ""
     app_version: str = "0.1.0"
 

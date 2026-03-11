@@ -3,12 +3,15 @@ name: Deploy to EC2
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
   deploy:
     runs-on: ubuntu-latest
-    # Only deploy after CI passes
-    needs: []
+    needs: [ci]
 
     steps:
       - name: Deploy via SSH
@@ -17,11 +20,14 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          script_stop: true
           script: |
+            set -e
             cd /opt/jip-india
             git pull origin main
             source venv/bin/activate
             pip install -r requirements.txt --quiet
             sudo systemctl restart jip-india
             sleep 3
-            curl -sf http://localhost:8001/health && echo "Deploy OK" || echo "Health check failed"
+            curl -sf http://localhost:8002/health
+            echo "✅ Deploy successful"
