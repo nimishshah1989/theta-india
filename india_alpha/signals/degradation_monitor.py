@@ -24,9 +24,9 @@ Floor at -30. If degradation_score <= -15: is_degrading = True.
 
 import asyncio
 import json
-import structlog
 from datetime import date, datetime, timedelta
-from typing import Optional
+
+import structlog
 
 log = structlog.get_logger()
 

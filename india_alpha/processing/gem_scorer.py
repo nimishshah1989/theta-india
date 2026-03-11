@@ -31,12 +31,13 @@ Conviction tiers (on final score):
   WATCH:    score >= 30
 """
 
-import json
 import asyncio
-import structlog
+import json
 from datetime import datetime
 from typing import Optional
+
 import anthropic
+import structlog
 
 from india_alpha.cost_tracker import CostTracker
 from india_alpha.db import fetch_all_rows

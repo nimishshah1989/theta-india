@@ -14,13 +14,13 @@ SEBI takeover disclosures, ESOPs, and general updates.
 """
 
 import asyncio
-import re
 import warnings
-import structlog
-from datetime import datetime, date, timedelta
+from datetime import date, datetime, timedelta
 from io import BytesIO
 from typing import Optional
+
 import httpx
+import structlog
 
 # Suppress noisy pdfplumber/pdfminer warnings about invalid color values
 warnings.filterwarnings("ignore", message=".*non-stroke color.*")

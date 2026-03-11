@@ -1,10 +1,12 @@
 import re
-import supabase._sync.client as _sync_mod
+from typing import Optional
+
 import supabase._async.client as _async_mod
+import supabase._sync.client as _sync_mod
 from supabase import Client
 from supabase._async.client import AsyncClient
+
 from india_alpha.config import get_settings
-from typing import Optional
 
 # Patch: Supabase SDK validates keys as JWTs but newer projects use sb_secret_/sb_publishable_ format.
 # Monkey-patch to accept both formats.

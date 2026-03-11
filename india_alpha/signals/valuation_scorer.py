@@ -18,11 +18,11 @@ Zone mapping applies a multiplier to the composite hidden gem score:
   OVERVALUED (<20): 0.75x
 """
 
-import asyncio
-import structlog
 from datetime import datetime
 from statistics import median
 from typing import Optional
+
+import structlog
 
 log = structlog.get_logger()
 

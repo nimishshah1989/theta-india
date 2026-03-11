@@ -18,12 +18,12 @@ Methodology:
 
 import asyncio
 import json
-import structlog
-from datetime import datetime, date, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Optional
 
 import httpx
+import structlog
 
 log = structlog.get_logger()
 

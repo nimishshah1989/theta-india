@@ -14,10 +14,9 @@ Six signals that detect phase-change in fundamental quality:
 When 4+ signals fire → 1.15x multiplier (quality is reinforcing)
 """
 
-import asyncio
-import structlog
 from datetime import datetime
-from typing import Optional
+
+import structlog
 
 log = structlog.get_logger()
 

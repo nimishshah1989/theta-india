@@ -6,15 +6,15 @@ Enriched with yfinance for market cap, sector, fundamentals.
 Target: 1,500–2,000 companies classified by tier.
 """
 
+import asyncio
 import csv
 import io
-import httpx
-import asyncio
-import yfinance as yf
-import pandas as pd
-import structlog
 from datetime import date
 from typing import Optional
+
+import httpx
+import structlog
+import yfinance as yf
 
 log = structlog.get_logger()
 

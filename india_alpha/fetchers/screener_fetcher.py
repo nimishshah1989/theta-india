@@ -17,12 +17,13 @@ To get your session cookie:
   4. Add to .env as SCREENER_SESSION_COOKIE
 """
 
-import re
-import httpx
 import asyncio
-import structlog
+import re
 from calendar import monthrange
 from typing import Optional
+
+import httpx
+import structlog
 
 log = structlog.get_logger()
 

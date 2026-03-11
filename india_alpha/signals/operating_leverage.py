@@ -14,10 +14,9 @@ Six signals that precede earnings surprises:
 When 3+ signals fire simultaneously = INFLECTION CANDIDATE
 """
 
-import asyncio
-import structlog
 from datetime import datetime
-from typing import Optional
+
+import structlog
 
 log = structlog.get_logger()
 

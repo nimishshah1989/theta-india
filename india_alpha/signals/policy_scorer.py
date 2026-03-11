@@ -13,10 +13,10 @@ Approach:
 
 import json
 import os
-import asyncio
-import structlog
 from datetime import datetime
 from typing import Optional
+
+import structlog
 
 log = structlog.get_logger()
 

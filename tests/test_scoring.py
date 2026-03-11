@@ -1,14 +1,11 @@
 """Unit tests for pure scoring functions in gem_scorer.py."""
 from __future__ import annotations
 
-import pytest
-
 from india_alpha.processing.gem_scorer import (
     compute_composite_score,
     get_conviction_tier,
     rescale_layer_score,
 )
-
 
 # ─────────────────────────────────────────────────────────────
 # rescale_layer_score

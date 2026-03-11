@@ -13,10 +13,11 @@ Data flow:
 """
 
 import asyncio
-import httpx
-import structlog
 from datetime import date, datetime, timedelta
 from typing import Optional
+
+import httpx
+import structlog
 
 log = structlog.get_logger()
 

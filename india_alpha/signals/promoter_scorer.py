@@ -18,10 +18,10 @@ Signal logic:
 Amplifiers applied for: size, clustering, pledge going to zero.
 """
 
-import asyncio
-import structlog
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
 from typing import Optional
+
+import structlog
 
 log = structlog.get_logger()
 
@@ -169,7 +169,7 @@ def _build_narrative(score, buy_cr, sell_cr, buy_count, pledge_dec, pledge_inc) 
             parts.append("Pledge reduction filed")
 
     if pledge_inc:
-        parts.append(f"⚠️ Pledge creation in last 12 months")
+        parts.append("⚠️ Pledge creation in last 12 months")
 
     if not parts:
         if score > 0:

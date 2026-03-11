@@ -8,11 +8,11 @@ Data flow:
   BSE API (primary) → insiderscreener.com (fallback) → stored in india_promoter_signals
 """
 
-import httpx
-import asyncio
-import structlog
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta
 from typing import Optional
+
+import httpx
+import structlog
 
 log = structlog.get_logger()
 

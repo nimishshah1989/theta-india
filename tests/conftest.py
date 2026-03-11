@@ -6,7 +6,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-
 # ─────────────────────────────────────────────────────────────
 # Sample data for mocking Supabase responses
 # ─────────────────────────────────────────────────────────────

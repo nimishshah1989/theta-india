@@ -15,13 +15,14 @@ Note: BSE API can be unreliable — this module is fully defensive.
 If the API is unavailable, it returns gracefully with zero records.
 """
 
-import json
 import asyncio
-import httpx
-import structlog
+import json
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
+
+import httpx
+import structlog
 
 log = structlog.get_logger()
 

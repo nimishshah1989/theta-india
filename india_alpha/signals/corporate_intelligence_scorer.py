@@ -15,13 +15,14 @@ Aggregation:
 Cost: ~$0.01-0.02 per Claude call. Max 3 per company, 40 per pipeline run.
 """
 
+import asyncio
 import json
 import re
-import asyncio
-import structlog
-from datetime import datetime, date, timedelta
+from datetime import date, datetime
 from typing import Optional
+
 import anthropic
+import structlog
 
 from india_alpha.cost_tracker import CostTracker
 

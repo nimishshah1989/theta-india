@@ -12,12 +12,13 @@ Coverage: ~100% of NSE/BSE listed companies.
 Rate limit: 1 request per 1.2 seconds (free tier, session cookie required).
 """
 
-import re
-import httpx
 import asyncio
-import structlog
+import re
 from datetime import datetime
 from typing import Optional
+
+import httpx
+import structlog
 
 log = structlog.get_logger()
 
@@ -357,7 +358,7 @@ async def enrich_and_add_missing(
 
     This recovers the ~40% of companies that yfinance fails on.
     """
-    from india_alpha.fetchers.universe_builder import MIN_MARKET_CAP_CR, MAX_MARKET_CAP_CR
+    from india_alpha.fetchers.universe_builder import MAX_MARKET_CAP_CR, MIN_MARKET_CAP_CR
 
     results = {"checked": 0, "added": 0, "filtered": 0, "failed": 0}
 

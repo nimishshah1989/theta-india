@@ -12,13 +12,14 @@ Data flow:
   NSE API → parse categories → detect superstars → compute deltas → upsert india_shareholding_patterns
 """
 
-import json
 import asyncio
-import httpx
-import structlog
+import json
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
+
+import httpx
+import structlog
 
 log = structlog.get_logger()
 
